@@ -1,4 +1,5 @@
 const CryptoJS = require('crypto-js');
+const { XMLParser } = require('fast-xml-parser');
 
 module.exports = async (req, res) => {
   // CORS Headers für Framer
@@ -26,6 +27,7 @@ module.exports = async (req, res) => {
     // Optionale Parameter aus Query
     const format = req.query.format || 'swissrets:2.7';
     const company = req.query.company || '';
+    const responseFormat = req.query.responseFormat || 'json'; // 'json' oder 'xml'
 
     // Timestamp generieren
     const timestamp = Date.now();
@@ -71,12 +73,26 @@ module.exports = async (req, res) => {
 
     const data = await response.text();
 
-    // Content-Type vom Original übernehmen
-    const contentType = response.headers.get('content-type') || 'application/xml';
-    res.setHeader('Content-Type', contentType);
-
-    // Return data
-    res.status(200).send(data);
+    // Wenn JSON gewünscht ist, konvertiere XML zu JSON
+    if (responseFormat === 'json') {
+      const parser = new XMLParser({
+        ignoreAttributes: false,
+        attributeNamePrefix: '@_',
+        textNodeName: '#text',
+        parseAttributeValue: true,
+        trimValues: true
+      });
+      
+      const jsonData = parser.parse(data);
+      
+      res.setHeader('Content-Type', 'application/json');
+      res.status(200).json(jsonData);
+    } else {
+      // Original XML zurückgeben
+      const contentType = response.headers.get('content-type') || 'application/xml';
+      res.setHeader('Content-Type', contentType);
+      res.status(200).send(data);
+    }
 
   } catch (error) {
     console.error('Error:', error);
