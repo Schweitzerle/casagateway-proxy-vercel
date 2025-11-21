@@ -93,7 +93,12 @@ module.exports = async (req, res) => {
         attributeNamePrefix: '@_',
         textNodeName: '#text',
         parseAttributeValue: true,
-        trimValues: true
+        trimValues: true,
+        isArray: (name, jpath, isLeafNode, isAttribute) => {
+          // Stelle sicher, dass 'property' immer ein Array ist
+          if (name === 'property') return true;
+          return false;
+        }
       });
       
       const jsonData = parser.parse(data);
