@@ -1,0 +1,21 @@
+{
+  "name": "casagateway-proxy",
+  "version": "1.0.0",
+  "description": "Vercel proxy for CASAGATEWAY API with HMAC authentication",
+  "main": "api/properties.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "keywords": [
+    "casagateway",
+    "real-estate",
+    "api-proxy",
+    "swissrets"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "crypto-js": "^4.2.0"
+  }
+}
